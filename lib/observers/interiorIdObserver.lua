@@ -1,13 +1,20 @@
-
 local _scanDelay = 0
 
-Citizen.CreateThread(function()
+Citizen.CreateThread(function()        
+    Global.interiorIds = {}
+    for k,v in pairs(_G) do
+        if type(v) == "table" and v.interiorId then
+            Global.interiorIds[v.interiorId] = true
+        end
+    end 
+        
     while true do
         -- /!\ To do: Find a more reliable way to get the current interior ID
         Global.currentInteriorId = GetInteriorAtCoords(GetEntityCoords(GetPlayerPed(-1)))
 
-        if (Global.currentInteriorId == 0) then
+        if (Global.currentInteriorId == 0 or not Global.interiorIds[Global.currentInteriorId]) then
             Global.ResetInteriorVariables()
+            _scanDelay = 1000
         else
             -- Setting variables
 
